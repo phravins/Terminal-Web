@@ -1,11 +1,15 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-// Initialize the GoogleGenAI client using Vite's env variable
-const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_PHRAVINS_API_KEY });
-
 export const getAIResponse = async (query: string) => {
+  const apiKey = import.meta.env.VITE_PHRAVINS_API_KEY;
+
+  if (!apiKey || apiKey === 'PLACEHOLDER_API_KEY') {
+    return 'Error: API Key is missing. Please add VITE_PHRAVINS_API_KEY to your env variables.';
+  }
+
   try {
+    const ai = new GoogleGenAI({ apiKey });
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: query,
