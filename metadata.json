@@ -1,0 +1,5 @@
+{
+  "name": "DevCLI Terminal Interface",
+  "description": "A terminal-themed website for DevCLI, featuring a functional command-line interface, project features, and an AI-powered developer assistant.",
+  "requestFramePermissions": []
+}
