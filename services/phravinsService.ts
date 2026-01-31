@@ -1,8 +1,8 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-// Initialize the GoogleGenAI client using process.env.API_KEY string directly.
-const ai = new GoogleGenAI({ apiKey: process.env.PHRAVINS_API_KEY });
+// Initialize the GoogleGenAI client using Vite's env variable
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_PHRAVINS_API_KEY });
 
 export const getAIResponse = async (query: string) => {
   try {
