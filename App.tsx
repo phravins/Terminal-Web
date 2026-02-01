@@ -260,7 +260,7 @@ const App: React.FC = () => {
       <header className="bg-zinc-900/80 backdrop-blur-md border-b border-zinc-800 h-12 flex items-center px-4 shrink-0 z-10 sticky top-0">
         <div className="flex items-center gap-2 mr-6">
           <Terminal size={18} className="text-emerald-500" />
-          <span className="font-bold text-sm tracking-tight hidden sm:inline">DEVCLI_WORKSPACE</span>
+          <span className="font-bold text-sm tracking-tight hidden sm:inline">DEVCLI</span>
         </div>
 
         <div className="flex gap-1 h-full overflow-x-auto no-scrollbar">
@@ -268,7 +268,7 @@ const App: React.FC = () => {
             onClick={() => setActiveTab('main.go')}
             className={`border-x border-t border-zinc-800 px-4 flex items-center gap-2 text-xs font-medium cursor-pointer transition-colors ${activeTab === 'main.go' ? 'bg-zinc-950 text-emerald-400' : 'bg-transparent text-zinc-500 hover:text-zinc-300'}`}
           >
-            <Layout size={14} /> main.go
+            <Layout size={14} /> main panel
           </div>
           <div
             onClick={() => {
@@ -276,7 +276,7 @@ const App: React.FC = () => {
             }}
             className={`border-x border-t border-zinc-800 px-4 flex items-center gap-2 text-xs font-medium cursor-pointer transition-colors ${activeTab === 'project_manager.go' ? 'bg-zinc-950 text-emerald-400' : 'bg-transparent text-zinc-500 hover:text-zinc-300'}`}
           >
-            <Package size={14} /> project_manager.go
+            <Package size={14} /> project_manager panel
           </div>
           <div
             onClick={() => {
@@ -284,7 +284,7 @@ const App: React.FC = () => {
             }}
             className={`border-x border-t border-zinc-800 px-4 flex items-center gap-2 text-xs font-medium cursor-pointer transition-colors ${activeTab === 'auth.go' ? 'bg-zinc-950 text-emerald-400' : 'bg-transparent text-zinc-500 hover:text-zinc-300'}`}
           >
-            <Shield size={14} /> auth.go
+            <Shield size={14} /> auth panel
           </div>
         </div>
 
@@ -327,7 +327,7 @@ const App: React.FC = () => {
         </div>
         <div className="flex items-center gap-4">
           <span>v1.0.4-stable</span>
-          <span className="text-emerald-500/60">BubbleTea Framework v0.24</span>
+          <span className="text-emerald-500/60">BubbleTea Framework v1.0.0</span>
         </div>
       </footer>
     </div>
