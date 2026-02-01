@@ -24,3 +24,12 @@ export interface Project {
   lastUpdated: string;
   path: string;
 }
+
+export interface AuditLogEntry {
+  id: string;
+  timestamp: Date;
+  event: string;
+  ip: string;
+  location: string;
+  status: 'success' | 'warning' | 'failed';
+}
