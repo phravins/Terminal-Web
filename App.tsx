@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { TerminalLine } from './types';
-import { DEVCLI_LOGO, FEATURES, INITIAL_SYSTEM_LOGS } from './constants';
+import { DEVCLI_LOGO, FEATURES, INITIAL_SYSTEM_LOGS, MOCK_PROJECTS } from './constants';
 import TerminalOutput from './components/TerminalOutput';
 import ProjectDashboard from './components/ProjectDashboard';
 import AuthDashboard from './components/AuthDashboard';
@@ -79,6 +79,101 @@ const App: React.FC = () => {
       addLine('system', 'drwxr-xr-x  devcli/templates');
       addLine('system', '-rw-r--r--  devcli.config.yaml');
       addLine('system', '-rw-r--r--  README.md');
+    } else if (cmd === 'whoami') {
+      addLine('system', 'guest@devcli-web-terminal');
+    } else if (cmd === 'date') {
+      addLine('system', new Date().toString());
+    } else if (cmd.startsWith('echo ')) {
+      addLine('system', command.substring(5));
+    } else if (cmd === 'contact') {
+      addLine('header', 'Contact Information:');
+      addLine('system', 'Email:  hello@devcli.sh');
+      addLine('system', 'GitHub: https://github.com/phravins');
+      addLine('system', 'Twitter: @devcli_sh');
+    } else if (cmd === 'projects' || cmd === 'dev projects') {
+      addLine('header', 'Active Projects:');
+      const projectList = (
+        <div className="flex flex-col gap-2 my-2">
+          <div className="grid grid-cols-12 text-zinc-500 border-b border-zinc-800 pb-1 mb-1 text-[10px] uppercase tracking-wider">
+            <div className="col-span-1">ID</div>
+            <div className="col-span-3">Name</div>
+            <div className="col-span-2">Status</div>
+            <div className="col-span-3">Language</div>
+            <div className="col-span-3 text-right">Updated</div>
+          </div>
+          {MOCK_PROJECTS.map((p) => (
+            <div key={p.id} className="grid grid-cols-12 text-xs font-mono hover:bg-zinc-900/50 p-1 rounded transition-colors group">
+              <div className="col-span-1 text-zinc-600 group-hover:text-zinc-400">{p.id}</div>
+              <div className="col-span-3 text-emerald-400 font-bold">{p.name}</div>
+              <div className="col-span-2">
+                <span className={`text-[10px] px-1 rounded ${p.status === 'active' ? 'bg-emerald-900/30 text-emerald-500' : p.status === 'development' ? 'bg-blue-900/30 text-blue-500' : 'bg-zinc-800 text-zinc-500'}`}>
+                  {p.status}
+                </span>
+              </div>
+              <div className="col-span-3 text-zinc-400">{p.language}</div>
+              <div className="col-span-3 text-right text-zinc-500">{p.lastUpdated}</div>
+            </div>
+          ))}
+        </div>
+      );
+      addLine('system', projectList);
+    } else if (cmd.startsWith('dev ')) {
+      // Handle other dev commands generically or specifically
+      const subCmd = cmd.split(' ')[1];
+      const feature = FEATURES.find(f => f.command === cmd);
+
+      if (feature) {
+        addLine('header', `Executing ${feature.name}...`);
+        await new Promise(r => setTimeout(r, 600)); // Fake processing delay
+
+        switch (subCmd) {
+          case 'run':
+            addLine('system', 'Running build pipeline...');
+            addLine('system', '✓ Linting passed');
+            addLine('system', '✓ Unit tests passed (45/45)');
+            addLine('system', 'Build success! Output: ./dist/main');
+            break;
+          case 'env':
+            addLine('system', 'Scanning for requirements.txt / package.json...');
+            addLine('system', 'Found package.json');
+            addLine('system', 'Node.js v18.16.0 environment active.');
+            break;
+          case 'serve':
+            addLine('system', 'Starting development server on port 3000...');
+            addLine('system', 'Ready on http://localhost:3000');
+            break;
+          case 'create':
+            addLine('system', 'Select file type to create:');
+            addLine('system', '1. Dockerfile');
+            addLine('system', '2. .gitignore');
+            addLine('system', '3. CI/CD Pipeline');
+            addLine('system', '(Simulation: File created)');
+            break;
+          case 'gen':
+            addLine('system', 'Generating boilerplate for Go REST API...');
+            addLine('system', '✓ Created cmd/main.go');
+            addLine('system', '✓ Created internal/server/routes.go');
+            break;
+          case 'snippets':
+            addLine('system', 'Listing saved snippets:');
+            addLine('system', '- auth_middleware (Go)');
+            addLine('system', '- react_component (TSX)');
+            addLine('system', '- db_connection (Python)');
+            break;
+          case 'fm':
+            addLine('system', 'Opening File Manager TUI...');
+            addLine('system', '[Error: Cannot open TUI in web mode. Use desktop app.]');
+            break;
+          case 'update':
+            addLine('system', 'Checking for updates...');
+            addLine('system', 'You are on the latest version v1.0.4');
+            break;
+          default:
+            addLine('system', `Command '${cmd}' executed successfully.`);
+        }
+      } else {
+        addLine('error', `Unknown dev command: ${subCmd}. Type 'features' to see available tools.`);
+      }
     } else if (cmd.startsWith('chat ')) {
       const query = command.substring(5);
       addLine('system', 'Connecting to DevCLI Neural Link...');
