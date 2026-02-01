@@ -7,6 +7,7 @@ import ProjectDashboard from './components/ProjectDashboard';
 import AuthDashboard from './components/AuthDashboard';
 import CommandInput from './components/CommandInput';
 import { getAIResponse } from './services/phravinsService';
+import { fetchClientInfo } from './services/ipService';
 import { Terminal, Shield, Cpu, Github, ExternalLink, Package, Layout } from 'lucide-react';
 
 const App: React.FC = () => {
