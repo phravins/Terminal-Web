@@ -1,6 +1,9 @@
 
 import React from 'react';
-import { Feature, Project } from './types';
+import { Feature, Project, AuditLogEntry } from './types';
+
+export const MOCK_IPS = ['192.168.1.1', '10.0.0.5', '172.16.0.12', '127.0.0.1', '203.0.113.42'];
+export const MOCK_LOCATIONS = ['San Francisco, US', 'London, UK', 'Mumbai, IN', 'Tokyo, JP', 'Berlin, DE'];
 
 export const MOCK_PROJECTS: Project[] = [
   { id: '1', name: 'devcli-core', status: 'active', language: 'Go', lastUpdated: '2h ago', path: '~/dev/core' },
@@ -39,4 +42,10 @@ export const INITIAL_SYSTEM_LOGS = [
   "Initializing unified interface...",
   "Checking virtual environments...",
   "System ready. Type 'help' to see available commands."
+];
+
+export const INITIAL_AUDIT_LOGS: AuditLogEntry[] = [
+  { id: 'log_1', timestamp: new Date(Date.now() - 3600000), event: 'SSH handshake from 192.168.1.5 accepted', ip: '192.168.1.5', location: 'Local Network', status: 'success' },
+  { id: 'log_2', timestamp: new Date(Date.now() - 7200000), event: 'Environment variables encrypted', ip: 'internal', location: 'System', status: 'success' },
+  { id: 'log_3', timestamp: new Date(Date.now() - 14400000), event: 'Detected strict mode react re-render', ip: 'localhost', location: 'Browser', status: 'warning' },
 ];
