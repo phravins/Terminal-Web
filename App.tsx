@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { TerminalLine } from './types';
-import { DEVCLI_LOGO, FEATURES, INITIAL_SYSTEM_LOGS, MOCK_PROJECTS } from './constants';
+import { TerminalLine, AuditLogEntry } from './types';
+import { DEVCLI_LOGO, FEATURES, INITIAL_SYSTEM_LOGS, MOCK_PROJECTS, INITIAL_AUDIT_LOGS, MOCK_IPS, MOCK_LOCATIONS } from './constants';
 import TerminalOutput from './components/TerminalOutput';
 import ProjectDashboard from './components/ProjectDashboard';
 import AuthDashboard from './components/AuthDashboard';
@@ -12,6 +12,8 @@ import { Terminal, Shield, Cpu, Github, ExternalLink, Package, Layout } from 'lu
 const App: React.FC = () => {
   const [lines, setLines] = useState<TerminalLine[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>(INITIAL_AUDIT_LOGS);
+  const [currentSession, setCurrentSession] = useState<{ ip: string; location: string } | null>(null);
   const [activeTab, setActiveTab] = useState('main.go');
   const initialized = useRef(false);
 
@@ -26,6 +28,21 @@ const App: React.FC = () => {
 
     // Initial boot sequence
     const boot = async () => {
+      // Simulate new session login
+      const randomIp = MOCK_IPS[Math.floor(Math.random() * MOCK_IPS.length)];
+      const randomLoc = MOCK_LOCATIONS[Math.floor(Math.random() * MOCK_LOCATIONS.length)];
+      setCurrentSession({ ip: randomIp, location: randomLoc });
+
+      const newLog: AuditLogEntry = {
+        id: `log_${Date.now()}`,
+        timestamp: new Date(),
+        event: 'Session Start (Web)',
+        ip: randomIp,
+        location: randomLoc,
+        status: 'success'
+      };
+      setAuditLogs(prev => [newLog, ...prev]);
+
       addLine('header', <pre className="text-emerald-500 text-[10px] sm:text-xs leading-none mb-4">{DEVCLI_LOGO}</pre>);
       for (const log of INITIAL_SYSTEM_LOGS) {
         await new Promise(r => setTimeout(r, 150));
@@ -174,6 +191,53 @@ const App: React.FC = () => {
       } else {
         addLine('error', `Unknown dev command: ${subCmd}. Type 'features' to see available tools.`);
       }
+    } else if (cmd.startsWith('security')) {
+      const subCmd = command.split(' ')[1];
+      if (subCmd === 'audit') {
+        addLine('header', 'Security Audit Logs:');
+        const logTable = (
+          <div className="flex flex-col gap-1 my-2 border border-zinc-800 rounded p-2 bg-zinc-900/30">
+            <div className="grid grid-cols-12 text-[10px] text-zinc-500 uppercase tracking-wider mb-2 pb-2 border-b border-zinc-800">
+              <div className="col-span-3">Timestamp</div>
+              <div className="col-span-3">Event</div>
+              <div className="col-span-2">IP Addr</div>
+              <div className="col-span-2">Location</div>
+              <div className="col-span-2 text-right">Status</div>
+            </div>
+            {auditLogs.map((log) => (
+              <div key={log.id} className="grid grid-cols-12 text-xs font-mono text-zinc-400 hover:bg-zinc-800/50 p-1 rounded">
+                <div className="col-span-3 text-zinc-500">{log.timestamp.toLocaleTimeString()} <span className="text-[10px] opacity-50">{log.timestamp.toLocaleDateString()}</span></div>
+                <div className="col-span-3 text-zinc-300">{log.event}</div>
+                <div className="col-span-2 text-blue-400/80">{log.ip}</div>
+                <div className="col-span-2 text-zinc-500">{log.location}</div>
+                <div className="col-span-2 text-right">
+                  <span className={`text-[10px] px-1 rounded ${log.status === 'success' ? 'text-emerald-500' :
+                    log.status === 'warning' ? 'text-yellow-500' : 'text-red-500'
+                    }`}>
+                    {log.status.toUpperCase()}
+                  </span>
+                </div>
+              </div>
+            ))}
+            <div className="mt-2 pt-2 border-t border-zinc-800 text-[10px] text-zinc-600 text-center">
+              Total Events: {auditLogs.length} | Protected by DevCLI Sentinel
+            </div>
+          </div>
+        );
+        addLine('system', logTable);
+      } else if (subCmd === 'status') {
+        if (currentSession) {
+          addLine('header', 'Current Session Security Status:');
+          addLine('system', `IP Address:   ${currentSession.ip}`);
+          addLine('system', `Location:     ${currentSession.location}`);
+          addLine('system', `Encryption:   AES-256 (Simulated)`);
+          addLine('system', `VPN Tunnel:   Inactive`);
+        } else {
+          addLine('error', 'Session info unavailable.');
+        }
+      } else {
+        addLine('system', 'Usage: security [audit|status]');
+      }
     } else if (cmd.startsWith('chat ')) {
       const query = command.substring(5);
       addLine('system', 'Connecting to DevCLI Neural Link...');
@@ -238,7 +302,7 @@ const App: React.FC = () => {
         {activeTab === 'project_manager.go' ? (
           <ProjectDashboard />
         ) : activeTab === 'auth.go' ? (
-          <AuthDashboard />
+          <AuthDashboard logs={auditLogs} />
         ) : (
           <>
             <TerminalOutput lines={lines} />
