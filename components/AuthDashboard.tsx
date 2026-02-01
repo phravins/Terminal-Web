@@ -1,8 +1,13 @@
 
 import React from 'react';
 import { Shield, User, Key, Lock, CheckCircle, AlertTriangle, Fingerprint } from 'lucide-react';
+import { AuditLogEntry } from '../types';
 
-const AuthDashboard: React.FC = () => {
+interface AuthDashboardProps {
+    logs: AuditLogEntry[];
+}
+
+const AuthDashboard: React.FC<AuthDashboardProps> = ({ logs }) => {
     return (
         <div className="flex flex-col h-full font-mono relative">
             <div className="flex justify-between items-center mb-6 pt-4">
@@ -95,22 +100,16 @@ const AuthDashboard: React.FC = () => {
 
             <div className="border-t border-zinc-800 pt-4 mt-auto">
                 <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-4">Security Audit Log</h3>
-                <div className="space-y-1 font-mono text-[10px] text-zinc-500">
-                    <div className="flex gap-4">
-                        <span className="text-zinc-600">23:54:12</span>
-                        <span className="text-emerald-500">SUCCESS</span>
-                        <span>SSH handshake from 192.168.1.5 accepted</span>
-                    </div>
-                    <div className="flex gap-4">
-                        <span className="text-zinc-600">23:50:01</span>
-                        <span className="text-emerald-500">SUCCESS</span>
-                        <span>Environment variables encrypted</span>
-                    </div>
-                    <div className="flex gap-4">
-                        <span className="text-zinc-600">23:45:22</span>
-                        <span className="text-yellow-500">WARN</span>
-                        <span>Detected strict mode react re-render</span>
-                    </div>
+                <div className="space-y-1 font-mono text-[10px] text-zinc-500 overflow-y-auto max-h-[150px]">
+                    {logs.slice(0, 5).map((log) => (
+                        <div key={log.id} className="flex gap-4">
+                            <span className="text-zinc-600">{log.timestamp.toLocaleTimeString([], { hour12: false })}</span>
+                            <span className={log.status === 'success' ? 'text-emerald-500' : log.status === 'warning' ? 'text-yellow-500' : 'text-red-500'}>
+                                {log.status === 'success' ? 'SUCCESS' : log.status === 'warning' ? 'WARN' : 'FAIL'}
+                            </span>
+                            <span className="truncate">{log.event} - {log.ip}</span>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>
